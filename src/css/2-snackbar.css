@@ -1,0 +1,39 @@
+@import url('./1-timer.css');
+@import url('./reset.css');
+
+.form label,
+.legend {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: rgb(46, 47, 66);
+}
+
+.fieldset {
+  width: 300px;
+  display: flex;
+  column-gap: 54px;
+  border: 1px solid rgb(128, 128, 128);
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+
+.notification-btn {
+width: 300px;
+height: 40px;
+padding: 8px 16px 8px 16px;
+border-radius: 8px;
+background-color: rgb(78, 117, 255);
+border: none;
+color: rgb(255, 255, 255);
+font-size: 16px;
+font-weight: 500;
+line-height: 1.5;
+letter-spacing: 0.04em;
+}
+
+.form-section input[type="datetime-local" i]::-webkit-calendar-picker-indicator {
+ background-size: 100px;
+}
