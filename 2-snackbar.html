@@ -4,47 +4,40 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page 3</title>
+    <title>Snackbar</title>
     
     <script type="module" crossorigin src="/goit-js-hw-10/commonHelpers2.js"></script>
     <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/modulepreload-polyfill-3cfb730f.js">
     <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/vendor-77e16229.js">
     <link rel="stylesheet" href="/goit-js-hw-10/assets/vendor-7a007824.css">
-    <link rel="stylesheet" href="/goit-js-hw-10/assets/2-snackbar-c1c2715d.css">
+    <link rel="stylesheet" href="/goit-js-hw-10/assets/styles-6237b62d.css">
   </head>
   <body>
+    <section>
+      <a href="./index.html">Go to home</a>
+    </section>
 
-    <section class="form-section" ><div class="container"> 
-      <p class="home-link"><a href="./index.html">Go Home</a></p>
+    <form class="form">
+      <label>
+        Delay (ms)
+        <input type="number" name="delay" required />
+      </label>
 
-      <!-- FORM STARTS -->
-      <form class="form">
-
+      <fieldset>
+        <legend>State</legend>
         <label>
-          Delay (ms)
-          <input class="delay-input input" type="number" name="delay" required />
+          <input type="radio" name="state" value="fulfilled" required />
+          Fulfilled
         </label>
-  
-        <fieldset class="fieldset">
-          <legend class="legend">State</legend>
-          <label>
-            <input type="radio" name="state" value="fulfilled" required />
-            Fulfilled
-          </label>
-          <label>
-            <input type="radio" name="state" value="rejected" required />
-            Rejected
-          </label>
-        </fieldset>
-      
-        <button class="notification-btn" type="submit">Create notification</button>
-      </form>
-      
+        <label>
+          <input type="radio" name="state" value="rejected" required />
+          Rejected
+        </label>
+      </fieldset>
 
-    </div></section>
-   <!-- FORM ENDS -->
-    
-    <!-- SCRIPTS -->
+      <button type="submit">Create notification</button>
+    </form>
+
     
   </body>
 </html>
