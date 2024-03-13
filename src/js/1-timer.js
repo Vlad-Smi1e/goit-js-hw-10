@@ -1,101 +1,103 @@
-// INCLUDING LIBRARY FLATPICKER
+'use strict';
 
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
 
-// INCLUDING LIBRARY IZITOAST
 
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
+const startButton = document.querySelector('[data-start]');
+const daysTime = document.querySelector('[data-days]');
+const hoursTime = document.querySelector('[data-hours]');
+const minutesTime = document.querySelector('[data-minutes]');
+const secondsTime = document.querySelector('[data-seconds]');
+const input = document.querySelector('#datetime-picker');
 
-// =========================================== VARIABLES ===================================================
+startButton.addEventListener('click', () => {
+  startButton.disabled = true;
+  input.disabled = true;
+  startTimer();
+});
 
-// BUTTON
-const btn = document.querySelector('[data-start]');
-btn.disabled = true;
+startButton.disabled = true;
+let timeDifference; 
+let intervalId;
 
-// TIMER INTERFACE DAYS, HOURS ETC ELEMENTS
-const daysField = document.querySelector('[data-days]');
-const hoursField = document.querySelector('[data-hours]');
-const minutesField = document.querySelector('[data-minutes]');
-const secondsField = document.querySelector('[data-seconds]');
-
-// USER SELECTED DATE
-let userSelectedDate;
-
-// ======================================= FLATPICKER OPTIONS ===============================================
 const options = {
+  defaultDate: null,
   enableTime: true,
-  dateFormat: "Y-m-d H:i",
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-  clickOpens: true,
+
   onClose(selectedDates) {
-    if (selectedDates[0] < new Date()) {
-      iziToast.error({
-        timeout: false,
-        message: 'Please choose a date in the future',
-        messageSize: '16px',
-        maxWidth: "300px",
-        position: 'topRight',
-      });
+    const userDate = new Date(selectedDates[0]).getTime();
+    const startDate = Date.now();
+              
+    if (userDate >= startDate) {
+      startButton.disabled = false;
+      timeDifference = userDate - startDate;
+      updateClockface(convertMs(timeDifference));     
     } else {
-      btn.disabled = false;
-      userSelectedDate = selectedDates[0];
-      btn.addEventListener('click', backwardsTimer);
+      iziToast.error({
+        fontSize: 'large',
+        close: false,
+        position: 'topRight',
+        messageColor: 'white',
+        timeout: 2000,
+        backgroundColor: 'red',
+        message: ("Please choose a date in the future")
+      });
     }
-  },
+  }
 };
 
-// =============================================== CREATING TIME PICKER ========================================
-const myTimePicker = flatpickr('#datetime-picker', options);
-console.log(myTimePicker);
+flatpickr('#datetime-picker', options);
 
-// ================================================ HANDLE COUNTDOWN ===========================================
+function updateClockface({ days, hours, minutes, seconds }) {
+  daysTime.textContent = `${days}`;
+  hoursTime.textContent = `${hours}`;
+  minutesTime.textContent = `${minutes}`;
+  secondsTime.textContent = `${seconds}`;
+};
 
-function backwardsTimer() {
-  btn.disabled = true;
-  myTimePicker.set('clickOpens', false);
+function startTimer() {
+  clearInterval(intervalId);
+  intervalId = setInterval(timer, 1000);
+};
 
-  let intervalId;
+function timer() { 
+  if (timeDifference > 1000) {
+    timeDifference -= 1000;
+    updateClockface(convertMs(timeDifference))
+  } else {
+    clearInterval(intervalId);
+    input.disabled = false;
+  }
+};
 
-  intervalId = setInterval(() => {
-    let milisecTimeDif = userSelectedDate - new Date();
+function addLeadingZero(value){
+    return String(value).padStart(2, "0");
+};
+  
+function convertMs(time) {
+    // Number of milliseconds per unit of time
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+    
+    // Remaining days
+    const days = addLeadingZero(Math.floor(time / day));
+    // Remaining hours
+    const hours = addLeadingZero(Math.floor((time % day) / hour));
+    // Remaining minutes
+    const minutes = addLeadingZero(Math.floor(((time % day) % hour) / minute));
+    // Remaining seconds
+    const seconds = addLeadingZero(Math.floor((((time % day) % hour) % minute) / second));
+    return { days, hours, minutes, seconds };
+};
 
-    if (milisecTimeDif <= 0) {
-      clearInterval(intervalId);
-    } else {
-      const timeObj = convertMs(milisecTimeDif);
-      let seconds = timeObj.seconds;
-      let minutes = timeObj.minutes;
-      let hours = timeObj.hours;
-      let days = timeObj.days;
-
-      secondsField.textContent = addLeadingZero(String(seconds));
-      minutesField.textContent = addLeadingZero(String(minutes));
-      hoursField.textContent = addLeadingZero(String(hours));
-      daysField.textContent = addLeadingZero(String(days));
-    }
-  }, 1000);
-}
-
-// ============================================== CONVERT MS FUNCTION =========================================
-
-function convertMs(ms) {
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-  const days = Math.floor(ms / day);
-  const hours = Math.floor((ms % day) / hour);
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-  return { days, hours, minutes, seconds };
-}
-
-// ================================================ ADD LEADING ZERO ==========================================
-
-function addLeadingZero(value) {
-  return value.padStart(2, '0');
-}
+// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}

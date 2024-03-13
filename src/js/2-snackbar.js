@@ -1,58 +1,41 @@
-// INCLUDING LIBRARY IZITOAST
+'use strict';
 
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
 
-// ========================================== VARIABLES ==============================================
+const form = document.querySelector('.form');
 
-const form = document.querySelector('form');
+form.addEventListener('submit', event => {
+  const delay = Number(form.delay.value);
 
-// ==================================== ADDING FORM EVENT LISTENER ===================================
-
-form.addEventListener('submit', generatePromises);
-
-// =================================== GENERATING PROMISES FUNCTION ==================================
-
-function generatePromises(event) {
   event.preventDefault();
-  // getting values
-  const delayValue = parseInt(event.currentTarget.elements.delay.value);
-  const stateValue = event.currentTarget.elements.state.value;
-
-  // making a promise
-  setTimeout(() => {
-    let promise;
-
-    // deciding if the promise will be fulfilled or rejected
-    if (stateValue === 'rejected') {
-      promise = Promise.reject(delayValue);
-    } else if (stateValue === 'fulfilled') {
-      promise = Promise.resolve(delayValue);
+  const promise = new Promise((resolve, reject) => {
+    if (form.state.value === 'fulfilled') {
+      setTimeout(() => {
+        resolve(delay);
+      }, delay);
+    } else if (form.state.value === 'rejected') {
+      setTimeout(() => {
+        reject(delay);
+      }, delay);
     }
-
-    // handling returned promise
-    promise
-      .then(value => {
-        // SUCCESS MESSAGE IF THE PROMISE WAS FULFILLED
-        iziToast.success({
-          timeout: false,
-          message: `Fulfilled promise in ${delayValue} ms`,
-          messageColor: 'rgb(255, 255, 255)',
-          messageSize: '16px',
-          backgroundColor: 'rgb(89, 161, 13)',
-          maxWidth: '384px',
-          position: "topRight",
-          progressBarColor: 'rgb(50, 97, 1)',
-        });
-      })
-      // ERROR MESSAGE IF THE PROMISE WAS REJECTED
-      .catch(error => {
-        iziToast.error({
-          message: `Rejected promise in ${delayValue}ms`,
-          position: "topRight",
+  });
+  promise
+    .then(delay => {
+      iziToast.show({
+        title: 'Success',
+        message: `✅ Fulfilled promise in ${delay}ms`,
+        position: 'topCenter',
+        color: 'green',
       });
+    })
+    .catch(delay => {
+      iziToast.show({
+        title: 'Error',
+        message: `❌ Rejected promise in ${delay}ms`,
+        position: 'topCenter',
+        color: 'red',
       });
-  }, delayValue);
-
+    });
   event.currentTarget.reset();
-}
+});
